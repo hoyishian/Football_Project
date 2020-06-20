@@ -52,92 +52,10 @@ for j in range(len(playerLinks)):
 # The page list the players more than once - let's use list(set(XXX)) to remove the duplicates
 playerLinks = list(set(playerLinks))
 
-
-# page = playerLinks[0]
-# tree = requests.get(page, headers=headers)
-# soup = BeautifulSoup(tree.content, 'html.parser')
-#
-# name = soup.find_all("h1")
-# value = soup.select("span.waehrung")
-# value1 = soup.find_all("span", class_="hauptpunkt")
-# print(value1[0].a.text)
-
-# print(value1)
-# print(value[0].text)
-# print(value[0].next_sibling)
-# print(value[1].text)
-
-
-# tempValue = soup.find_all("div", class_="dataMarktwert")
-# print(tempValue[0])
-# print(tempValue[0].a.span.text)
-# print(tempValue[0].a.span.next_sibling)
-# print(tempValue[0].a.span.next_sibling.next_sibling.text)
-
 nameList = []
 club = []
 currency = []
 value = []
-
-# for i in range(len(playerLinks)):
-#     page = playerLinks[i]
-#     tree = requests.get(page, headers=headers)
-#     soup = BeautifulSoup(tree.content, 'html.parser')
-#
-#     try:
-#         tempValue = soup.find_all("div", class_="dataMarktwert")
-#         currency.append(tempValue[0].a.span.text)
-#     except IndexError:
-#         continue
-#     try:
-#         tempValue = soup.find_all("div", class_="dataMarktwert")
-#         value.append(float(tempValue[0].a.span.next_sibling))
-#     except IndexError:
-#         currency.pop()
-#         continue
-#
-#     try:
-#         tempValue = soup.find_all("div", class_="dataMarktwert")
-#         denom.append(tempValue[0].a.span.next_sibling.next_sibling.text)
-#     except IndexError:
-#         currency.pop()
-#         value.pop()
-#         continue
-#
-#     try:
-#         tempValue = soup.find_all("div", class_="dataMarktwert")
-#         total_value.append(tempValue[0].a.span.text + str(tempValue[0].a.span.next_sibling) + tempValue[0].a.span.next_sibling.next_sibling.text)
-#     except IndexError:
-#         currency.pop()
-#         value.pop()
-#         denom.pop()
-#         continue
-#     try:
-#         tempClub = soup.find_all("span", class_="hauptpunkt")
-#         club.append(tempClub[0].a.text)
-#     except IndexError:
-#         currency.pop()
-#         value.pop()
-#         denom.pop()
-#         total_value.pop()
-#         continue
-#     try:
-#         name = soup.find_all("h1")
-#         nameList.append(name[0].text)
-#     except IndexError:
-#         currency.pop()
-#         value.pop()
-#         denom.pop()
-#         total_value.pop()
-#         club.pop()
-#         continue
-#
-# print(len(nameList))
-# print(len(club))
-# print(len(currency))
-# print(len(value))
-# print(len(denom))
-# print(len(total_value))
 
 for i in range(len(playerLinks)):
     page = playerLinks[i]
@@ -191,4 +109,3 @@ newdf = pd.DataFrame(zippedList, columns = columns)
 currentPath = str(pathlib.Path(__file__).parent.absolute())
 currentPath = currentPath + "/marketvalue.csv"
 newdf.to_csv(currentPath, index = False)
-print(currentPath)
