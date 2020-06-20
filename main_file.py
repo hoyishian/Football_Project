@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
-# import pandas as pd
+import pandas as pd
+import pathlib
+
 from os.path import basename
 
 
@@ -76,14 +78,71 @@ nameList = []
 club = []
 currency = []
 value = []
-denom = []
-total_value = []
+
+# for i in range(len(playerLinks)):
+#     page = playerLinks[i]
+#     tree = requests.get(page, headers=headers)
+#     soup = BeautifulSoup(tree.content, 'html.parser')
+#
+#     try:
+#         tempValue = soup.find_all("div", class_="dataMarktwert")
+#         currency.append(tempValue[0].a.span.text)
+#     except IndexError:
+#         continue
+#     try:
+#         tempValue = soup.find_all("div", class_="dataMarktwert")
+#         value.append(float(tempValue[0].a.span.next_sibling))
+#     except IndexError:
+#         currency.pop()
+#         continue
+#
+#     try:
+#         tempValue = soup.find_all("div", class_="dataMarktwert")
+#         denom.append(tempValue[0].a.span.next_sibling.next_sibling.text)
+#     except IndexError:
+#         currency.pop()
+#         value.pop()
+#         continue
+#
+#     try:
+#         tempValue = soup.find_all("div", class_="dataMarktwert")
+#         total_value.append(tempValue[0].a.span.text + str(tempValue[0].a.span.next_sibling) + tempValue[0].a.span.next_sibling.next_sibling.text)
+#     except IndexError:
+#         currency.pop()
+#         value.pop()
+#         denom.pop()
+#         continue
+#     try:
+#         tempClub = soup.find_all("span", class_="hauptpunkt")
+#         club.append(tempClub[0].a.text)
+#     except IndexError:
+#         currency.pop()
+#         value.pop()
+#         denom.pop()
+#         total_value.pop()
+#         continue
+#     try:
+#         name = soup.find_all("h1")
+#         nameList.append(name[0].text)
+#     except IndexError:
+#         currency.pop()
+#         value.pop()
+#         denom.pop()
+#         total_value.pop()
+#         club.pop()
+#         continue
+#
+# print(len(nameList))
+# print(len(club))
+# print(len(currency))
+# print(len(value))
+# print(len(denom))
+# print(len(total_value))
 
 for i in range(len(playerLinks)):
     page = playerLinks[i]
     tree = requests.get(page, headers=headers)
     soup = BeautifulSoup(tree.content, 'html.parser')
-
     try:
         tempValue = soup.find_all("div", class_="dataMarktwert")
         currency.append(tempValue[0].a.span.text)
@@ -95,22 +154,18 @@ for i in range(len(playerLinks)):
     except IndexError:
         currency.pop()
         continue
-
     try:
         tempValue = soup.find_all("div", class_="dataMarktwert")
-        denom.append(tempValue[0].a.span.next_sibling.next_sibling.text)
+        denom = tempValue[0].a.span.next_sibling.next_sibling.text
+        if denom == 'm':
+            value[-1] = value[-1] * 1000000
+        elif denom == "Th.":
+            value[-1] = value[-1] * 1000
+        else:
+            value[-1] = value[-1]
     except IndexError:
         currency.pop()
         value.pop()
-        continue
-
-    try:
-        tempValue = soup.find_all("div", class_="dataMarktwert")
-        total_value.append(tempValue[0].a.span.text + str(tempValue[0].a.span.next_sibling) + tempValue[0].a.span.next_sibling.next_sibling.text)
-    except IndexError:
-        currency.pop()
-        value.pop()
-        denom.pop()
         continue
     try:
         tempClub = soup.find_all("span", class_="hauptpunkt")
@@ -118,8 +173,6 @@ for i in range(len(playerLinks)):
     except IndexError:
         currency.pop()
         value.pop()
-        denom.pop()
-        total_value.pop()
         continue
     try:
         name = soup.find_all("h1")
@@ -127,14 +180,15 @@ for i in range(len(playerLinks)):
     except IndexError:
         currency.pop()
         value.pop()
-        denom.pop()
-        total_value.pop()
         club.pop()
         continue
 
-print(len(nameList))
-print(len(club))
-print(len(currency))
-print(len(value))
-print(len(denom))
-print(len(total_value))
+
+columns = ['Name', 'Club', 'Currency', 'Value']
+zippedList = list(zip(nameList, club, currency, value))
+newdf = pd.DataFrame(zippedList, columns = columns)
+
+currentPath = str(pathlib.Path(__file__).parent.absolute())
+currentPath = currentPath + "/marketvalue.csv"
+newdf.to_csv(currentPath, index = False)
+print(currentPath)
